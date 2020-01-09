@@ -41,7 +41,7 @@ def Integer(cstr):
         else:
             return int(cstr,10)
     except:
-        #print traceback.format_exc()
+        #print(traceback.format_exc())
         return None
 
 def IsEnabled(key,arobj):
@@ -363,7 +363,7 @@ class ArgObject(QTreeWidgetItem):
                     if(max > self.childCount()):
                         self.addChildArobj(ArgObject(Arxml(Descriptor),self.root,self))
                     else:
-                        print 'Error:Maximum %s for %s is %s!'%(what,self.arxml.tag,max)  
+                        print('Error: Maximum %s for %s is %s!'%(what,self.arxml.tag,max))
                 else:
                     # ok, by default this is list things or its parent is not a list
                     already = False
@@ -375,7 +375,7 @@ class ArgObject(QTreeWidgetItem):
                     if(already == False):
                         self.addChildArobj(ArgObject(Arxml(Descriptor),self.root,self))
                     else:
-                        print 'Info: Only 1 %s is allowed for %s.'%(Descriptor.tag,self.arxml.tag)
+                        print('Info: Only 1 %s is allowed for %s.'%(Descriptor.tag,self.arxml.tag))
                 self.setExpanded(True)        
 
 class ArgObjectTree(QTreeWidget):
@@ -434,7 +434,7 @@ class ArgObjectTree(QTreeWidget):
                             arobj4 = arobj.child(n)
                             arobj4.setExpanded(True)
         except:
-            #print traceback.format_exc()
+            #print(traceback.format_exc())
             pass
 
     def toArxml(self):
@@ -562,7 +562,7 @@ if __name__ == '__main__':
     elif(os.name == 'posix'):
         qtApp.setFont(QFont('Monospace', 12))
     else:
-        print('unKnown platform.')
+        print('unknown platform.')
     qtGui = ArgModule(Arxml(ET.parse('./easySAR.arxml').getroot().find('OS')))
     qtGui.show()
     qtApp.exec_()  

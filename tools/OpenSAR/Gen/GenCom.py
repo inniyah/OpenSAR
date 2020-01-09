@@ -20,7 +20,7 @@
  */
 """
 import sys,os
-from GCF import *
+from .GCF import *
 
 __all__ = ['GenCom']
 
@@ -33,7 +33,7 @@ def GenCom(root,dir):
     __dir = '%s'%(dir)
     GenH()
     GenC()
-    print '>>> Gen Com DONE <<<'
+    print('>>> Gen Com DONE <<<')
 
 def GenH():
     global __dir

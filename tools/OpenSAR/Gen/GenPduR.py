@@ -20,7 +20,7 @@
  */
 """
 import sys,os
-from GCF import *
+from .GCF import *
 
 __all__ = ['GenPduR']
 
@@ -32,7 +32,7 @@ def GenPduR(root,dir):
     __dir = '%s'%(dir)
     GenH()
     GenC()
-    print ">>> Gen PduR DONE <<<"
+    print(">>> Gen PduR DONE <<<")
 
 def isUpperLayer(layer):
     if(layer=='Com' or layer=='Dcm'):

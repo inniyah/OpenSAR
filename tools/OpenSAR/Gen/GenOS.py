@@ -20,7 +20,7 @@
  */
 """
 import sys,os
-from GCF import *
+from .GCF import *
 
 __all__ = ['GenOS']
 
@@ -32,7 +32,7 @@ def GenOS(root,dir):
     __dir = '%s'%(dir)
     GenH()
     GenC()
-    print '>>> Gen OS DONE <<<'
+    print('>>> Gen OS DONE <<<')
 
 def GenH():
     global __dir

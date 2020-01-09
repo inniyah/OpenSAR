@@ -20,7 +20,7 @@
  */
 """
 import sys,os
-from GCF import *
+from .GCF import *
 __all__ = ['GenDcm']
 
 AlreadySecurityRef = []
@@ -35,7 +35,7 @@ def GenDcm(root,dir):
     __dir = '%s'%(dir)
     GenH()
     GenC()
-    print '>>> Gen Dcm DONE <<<'
+    print('>>> Gen Dcm DONE <<<')
 
 def GenH():
     global __dir

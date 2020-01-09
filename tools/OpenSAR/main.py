@@ -157,7 +157,7 @@ def easySAR():
     elif(os.name == 'posix'):
         qtApp.setFont(QFont('Monospace'))
     else:
-        print('unKnown platform.')
+        print('unknown platform.')
     qtGui = easySARGui()
     qtGui.show()
     qtApp.exec_()

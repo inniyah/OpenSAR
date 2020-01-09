@@ -20,7 +20,7 @@
  */
 """
 import sys,os
-from GCF import *
+from .GCF import *
 
 __all__ = ['GenCan']
 
@@ -32,7 +32,7 @@ def GenCan(root,dir):
     __dir = '%s'%(dir)
     GenH()
     GenC()
-    print '>>> Gen Can DONE <<<'
+    print('>>> Gen Can DONE <<<')
     
 
 def GenH():

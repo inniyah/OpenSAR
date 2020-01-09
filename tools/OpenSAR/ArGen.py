@@ -92,7 +92,7 @@ def ArvfbGen(arxml,dir):
                                                           GAGet(sig,'Size'),GAGet(sig,'InitialValue')))
     fp.write('\n\nexit\n\n')
     fp.close()
-    print '>>> Gen Arvfb <<<'
+    print('>>> Gen Arvfb <<<')
            
 gDefault_GEN = '../../app/config/GEN'
 if __name__ == '__main__':
