@@ -19,9 +19,10 @@
  * Source Open At: https://github.com/parai/OpenSAR/
  */
 """
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 import sys,os,re
 import xml.etree.ElementTree as ET
 import traceback
@@ -53,11 +54,11 @@ def IsEnabled(key,arobj):
     descriptor = arxml.getKeyDescriptor(key)
     Enabled = True
     if(reEnabled.search(descriptor)):
-        list = reEnabled.search(descriptor).groups()[0]
-        list = re.split(reSpilt, list)
+        list_values = reEnabled.search(descriptor).groups()[0]
+        list_values = re.split(reSpilt, list_values)
         isAnd = True # '&&"
         isEnabled = True
-        for cond in list:
+        for cond in list_values:
             if(cond == '||' or cond == 'or'):
                 isAnd = False
             elif(cond == '&&' or cond == 'and'):
@@ -134,7 +135,8 @@ class ArgInfoInput(QTextEdit):
         self.arobj = arobj
         super(QTextEdit,self).__init__(self.arobj.arxml.attrib(self.key))
         self.setToolTip(self.arobj.arxml.getKeyDescriptor(self.key).replace('\\n','\n'))
-        self.connect(self, SIGNAL('textChanged()'),self.onTextChanged)
+        #self.connect(self, SIGNAL('textChanged()'),self.onTextChanged)
+        self.textChanged.connect(self.onTextChanged)
     def onTextChanged(self):
         self.arobj.arxml.attrib(self.key,self.toPlainText())  
     
@@ -156,8 +158,9 @@ class ArgInput(QLineEdit):
                 var = reDeafult.search(descriptor).groups()[0]
             self.arobj.arxml.attrib(self.key,var) 
         self.setToolTip(self.arobj.arxml.getKeyDescriptor(self.key).replace('\\n','\n'))
-        self.connect(self, SIGNAL('textChanged(QString)'),self.onTextChanged)
-        
+        #self.connect(self, SIGNAL('textChanged(QString)'),self.onTextChanged)
+        self.textChanged.connect(self.onTextChanged)
+
     def onTextChanged(self,text):
         reInput = re.compile(r'^(Text|Integer)')
         descriptor = self.arobj.arxml.getKeyDescriptor(self.key)
@@ -198,8 +201,9 @@ class ArgSelect(QComboBox):
         self.setEnabled(IsEnabled(key, arobj))
         self.initItems()
         self.setToolTip(self.arobj.arxml.getKeyDescriptor(self.key).replace('\\n','\n'))
-        self.connect(self, SIGNAL('currentIndexChanged(QString)'),self.onTextChanged)
-        
+        #self.connect(self, SIGNAL('currentIndexChanged(QString)'),self.onTextChanged)
+        self.currentIndexChanged.connect(self.onTextChanged)
+
     def initItems(self):
         if(self.isEnabled()==False):
             # if disabled set it to default
@@ -215,10 +219,10 @@ class ArgSelect(QComboBox):
         type = reSelect.search(descriptor).groups()[0]
         if(type == 'Enum'):
             reList = re.compile(r'^Enum=\(([^\s]+)\)')
-            list = reList.search(descriptor).groups()[0].split(',')
-            self.addItems(QStringList(list))
+            list_values = reList.search(descriptor).groups()[0].split(',')
+            self.addItems(list(list_values))
         elif(type == 'Boolean'):
-            self.addItems(QStringList(['True','False']))
+            self.addItems(list(['True','False']))
         elif(type=='EnumRef'):
             reRef = re.compile(r'^EnumRef=([^\s]+)\s*')
             reFilter = re.compile(r'Filter=\((\w+)(==|!=)(\w+)\)')
@@ -233,19 +237,19 @@ class ArgSelect(QComboBox):
                     else:
                         break
                 ref = ref.replace('(Self.%s)'%(keyL),tarobj.arxml.attrib(key))
-            list = []
+            list_values = []
             url=self.root.getURL(ref)
             if(url!=None):
                 for uu in url:
                     if(reFilter.search(descriptor)):
                         grp = reFilter.search(descriptor).groups()
                         if(grp[1]=='==' and uu.attrib[grp[0]]==grp[2]):
-                            list.append(uu.attrib['Name'])
+                            list_values.append(uu.attrib['Name'])
                         elif(grp[1]=='!=' and uu.attrib[grp[0]]!=grp[2]):
-                            list.append(uu.attrib['Name'])
+                            list_values.append(uu.attrib['Name'])
                     else:
-                        list.append(uu.attrib['Name'])
-            self.addItems(QStringList(list))
+                        list_values.append(uu.attrib['Name'])
+            self.addItems(list(list_values))
         self.setCurrentIndex(self.findText(self.arobj.arxml.attrib(self.key)))
     def onTextChanged(self,text):
         self.arobj.arxml.attrib(self.key,text)        
@@ -276,8 +280,9 @@ class ArgAction(QAction):
     def __init__(self,text,parent): 
         super(QAction,self).__init__(text,parent) 
         self.root =  parent
-        self.connect(self,SIGNAL('triggered()'),self.onAction)
- 
+        #self.connect(self,SIGNAL('triggered()'),self.onAction)
+        self.triggered.connect(self.onAction)
+
     def onAction(self):
         self.root.onAction(self.text())
 
@@ -382,7 +387,8 @@ class ArgObjectTree(QTreeWidget):
         self.setHeaderLabel('%s'%(self.arxml.tag))
         for arxml in self.arxml.childArxmls():
             self.addTopLevelItem(ArgObject(arxml,self.root))
-        self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+        #self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+        self.itemSelectionChanged.connect(self.onItemSelectionChanged)
         self.setMaximumWidth(600)
         
         
@@ -449,7 +455,7 @@ class ArgObjectTree(QTreeWidget):
         elif(action[0] == 'Delete'):
             self.onAction_Delete(action[1])
        
-    def itemSelectionChanged(self):
+    def onItemSelectionChanged(self):
         arobj = self.currentItem()
         assert(isinstance(arobj,ArgObject))
         arobj.onItemSelectionChanged()
@@ -514,7 +520,7 @@ class ArgModule(QMainWindow):
                             break
                 break
             self.table.setColumnCount(len(headers))  
-            self.table.setHorizontalHeaderLabels(QStringList(headers))
+            self.table.setHorizontalHeaderLabels(list(headers))
             for i in range(0,arobj.childCount()):
                 arobj1 = arobj.child(i)
                 index = self.table.rowCount()
