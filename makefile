@@ -156,7 +156,7 @@ help:
 	@echo "  BDIR          = ${BDIR}"
 	@echo "  BOARDDIR      = $(BOARDDIR)"
 	@echo "  CROSS_COMPILE = $(CROSS_COMPILE)"
-	@echo "  CURDIR        = $(CURDIR)"	
+	@echo "  CURDIR        = $(CURDIR)"
 	@echo ""
 
 
@@ -168,27 +168,25 @@ show_build:
 	@echo "==========[ BUILD INFO ]==========="
 	@echo "  BDIR:           $(BDIR) [$(origin BDIR)]"
 	@echo "  BOARDDIR:       $(BOARDDIR) [$(origin BOARDDIR)]"
-	@echo "  COMPILER:       $(COMPILER) [$(origin COMPILER)]"	
-ifeq ($(COMPILER),cw)	
+	@echo "  COMPILER:       $(COMPILER) [$(origin COMPILER)]"
+ifeq ($(COMPILER),cw)
 	@echo "  CW_COMPILE:     $(CW_COMPILE) [$(origin CW_COMPILE)]"
-else ifeq ($(COMPILER),iar)	
+else ifeq ($(COMPILER),iar)
 	@echo "  IAR_COMPILE:     $(IAR_COMPILE) [$(origin IAR_COMPILE)]"
 else 
 	@echo "  CROSS_COMPILE:  $(CROSS_COMPILE) [$(origin CROSS_COMPILE)]"
 endif
 	@echo "  CURDIR:         $(CURDIR)"
 	@echo "  SELECT_CONSOLE: $(SELECT_CONSOLE) [$(origin SELECT_CONSOLE)]"
-	
-	
-	
-$(dir_cmd_goals) :: show_build FORCE 	
+
+$(dir_cmd_goals) :: show_build FORCE 
 	@echo ""
 	@echo ==========[ ${abspath $@}  ]===========
 	@if [ ! -d $@ ]; then echo "No such directory: \"$@\" quitting"; exit 1; fi
 	+@[ -d $@/$(objdir) ] || mkdir -p $@/$(objdir)
 	@chmod 777 $@/$(objdir)
 	$(Q)$(MAKE) -r  -C $@/$(objdir) -f $(CURDIR)/scripts/rules.mk  ROOTDIR=$(CURDIR) SUBDIR=$@ $(cmd_cmd_goals)
-.PHONY: test	
+.PHONY: test
 
 FORCE:
 
@@ -202,10 +200,10 @@ clean_all:
 	@echo
 	@echo "  >>>>>>>>>  DONE  <<<<<<<<<"
 	@echo
-	
-config: $(dir_cmd_goals)	
-	
-.PHONY clean:	
+
+config: $(dir_cmd_goals)
+
+.PHONY clean:
 clean: $(dir_cmd_goals)
 	@echo
 	@echo "  >> Cleaning MAIN $(CURDIR)"
@@ -213,32 +211,30 @@ clean: $(dir_cmd_goals)
 #	$(Q)find . -type f -name *.a | xargs rm -rf
 #	$(Q)rm   -rf libs/*
 	@echo
-	@(cd ./tools/arvfb;make clean)
+	cd ./tools/arvfb && make clean
 	@echo "  >>>>>>>>>  DONE  <<<<<<<<<"
 	@echo
 
 studio:
-	@(cd ./tools/OpenSAR;python main.py)
+	cd ./tools/OpenSAR && python3 main.py
 
 gen:
-	@(cd ./tools/OpenSAR;python ArGen.py)
+	cd ./tools/OpenSAR && python3 ArGen.py
 
 binaries/$(BOARDDIR)/Flash.img:
 	dd if=/dev/zero of=binaries/$(BOARDDIR)/Flash.img bs=1M count=1
-	
+
 binaries/$(BOARDDIR)/Eeprom.img:
 	dd if=/dev/zero of=binaries/$(BOARDDIR)/Eeprom.img bs=16K count=1
 
 run-support: tool binaries/$(BOARDDIR)/Flash.img binaries/$(BOARDDIR)/Eeprom.img
-	
-run:
-	
-tool:
-	@(cd ./tools/arvfb;make all)
-	
 
-		
-	
+run:
+
+tool:
+	cd ./tools/arvfb && make all
+
+
 
 
 
