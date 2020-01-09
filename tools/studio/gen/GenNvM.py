@@ -1,7 +1,7 @@
 import sys,os
 import xml.etree.ElementTree as ET
-from GenFee import GenFee
-from GenEa import GenEa
+from .GenFee import GenFee
+from .GenEa import GenEa
 
 __all__ = ['GenNvM']
 
@@ -69,7 +69,7 @@ def GenNvM(wfxml):
     GenEa(wfxml)
     GenH()
     GenC()
-    print '>>> Gen NvM DONE <<<'
+    print('>>> Gen NvM DONE <<<')
 
 
 def tInt(strnum):

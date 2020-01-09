@@ -1,6 +1,7 @@
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 import sys,os
 import xml.etree.ElementTree as ET
 
@@ -12,11 +13,12 @@ class easyEaCfgTree(QTreeWidget):
     def __init__(self,parent):  
         super(QTreeWidget,self).__init__(parent) 
         self.root =  parent
-        list = ['Name','Type','Size','Default Value','Comment']
-        self.setHeaderLabels(QStringList(list))
+        list_values = ['Name','Type','Size','Default Value','Comment']
+        self.setHeaderLabels(list(list_values))
         self.setColumnWidth(0,150)
-        self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
-    def itemSelectionChanged(self):
+        #self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+        self.itemSelectionChanged.connect(self.onItemSelectionChanged)
+    def onItemSelectionChanged(self):
         try:
             treeItem = self.currentItem()
             if(self.indexOfTopLevelItem(treeItem) != -1):
@@ -105,7 +107,7 @@ class easyEaCfgTree(QTreeWidget):
         dataName = QLineEdit(sName)
         dataName.setStatusTip('Name For Data, each Data must has a unique name.')
         dataType = QComboBox()
-        dataType.addItems(QStringList(['uint32','uint16','uint8','uint32_n','uint16_n','uint8_n']))
+        dataType.addItems(list(['uint32','uint16','uint8','uint32_n','uint16_n','uint8_n']))
         dataType.setCurrentIndex(dataType.findText(sType))
         dataSize = QLineEdit(sSize)
         dataSize.setToolTip('Only valid for type [uint32_n,uint16_n,uint8_n]')
@@ -126,7 +128,7 @@ class easyEaCfgTree(QTreeWidget):
             index = pTree.indexOfChild(self.currentItem())
             pTree.takeChild(index)
         else:
-            print 'system error when remove event.'
+            print('system error when remove event.')
             
     def deleteBlock(self):
         if(self.indexOfTopLevelItem(self.currentItem()) != -1):
@@ -140,11 +142,12 @@ class easyFeeCfgTree(QTreeWidget):
     def __init__(self,parent):  
         super(QTreeWidget,self).__init__(parent) 
         self.root =  parent
-        list = ['Name','Type','Size','Default Value','Comment']
-        self.setHeaderLabels(QStringList(list))
+        list_values = ['Name','Type','Size','Default Value','Comment']
+        self.setHeaderLabels(list(list_values))
         self.setColumnWidth(0,150)
-        self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
-    def itemSelectionChanged(self):
+        #self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+        self.itemSelectionChanged.connect(self.onItemSelectionChanged)
+    def onItemSelectionChanged(self):
         try:
             treeItem = self.currentItem()
             if(self.indexOfTopLevelItem(treeItem) != -1):
@@ -233,7 +236,7 @@ class easyFeeCfgTree(QTreeWidget):
         dataName = QLineEdit(sName)
         dataName.setStatusTip('Name For Data, each Data must has a unique name.')
         dataType = QComboBox()
-        dataType.addItems(QStringList(['uint32','uint16','uint8','uint32_n','uint16_n','uint8_n']))
+        dataType.addItems(list(['uint32','uint16','uint8','uint32_n','uint16_n','uint8_n']))
         dataType.setCurrentIndex(dataType.findText(sType))
         dataSize = QLineEdit(sSize)
         dataSize.setToolTip('Only valid for type [uint32_n,uint16_n,uint8_n]')
@@ -254,7 +257,7 @@ class easyFeeCfgTree(QTreeWidget):
             index = pTree.indexOfChild(self.currentItem())
             pTree.takeChild(index)
         else:
-            print 'system error when remove event.'
+            print('system error when remove event.')
             
     def deleteBlock(self):
         if(self.indexOfTopLevelItem(self.currentItem()) != -1):
@@ -266,8 +269,8 @@ class easyNvMCfgTree(QTreeWidget):
     def __init__(self,parent=None):  
         super(QTreeWidget,self).__init__(parent)
         self.setHeaderLabel('easyNvM')
-        self.addTopLevelItem(QTreeWidgetItem(QStringList('Fee')))
-        self.addTopLevelItem(QTreeWidgetItem(QStringList('Ea')))
+        self.addTopLevelItem(QTreeWidgetItem(list('Fee')))
+        self.addTopLevelItem(QTreeWidgetItem(list('Ea')))
         self.setMaximumWidth(200); 
 
 # this is the root configuration of OpenSAR NvM
@@ -283,12 +286,14 @@ class easyNvMGui(QMainWindow):
     def creMenu(self):
         #  create Three three Action
         self.qAction1=QAction(self.tr('Action1'),self) 
-        self.connect(self.qAction1,SIGNAL('triggered()'),self.mqAction1) 
+        #self.connect(self.qAction1,SIGNAL('triggered()'),self.mqAction1)
+        self.qAction1.triggered.connect(self.mqAction1)
         self.menuBar().addAction(self.qAction1)
         self.qAction1.setDisabled(True)
         
-        self.qAction2=QAction(self.tr('Action2'),self) 
-        self.connect(self.qAction2,SIGNAL('triggered()'),self.mqAction2) 
+        self.qAction2=QAction(self.tr('Action2'),self)
+        #self.connect(self.qAction2,SIGNAL('triggered()'),self.mqAction2) 
+        self.qAction2.triggered.connect(self.mqAction2)
         self.menuBar().addAction(self.qAction2)
         self.qAction2.setDisabled(True)
     def mqAction1(self):
@@ -319,7 +324,8 @@ class easyNvMGui(QMainWindow):
         self.qSplitter.insertWidget(1,self.easyFeeTree)
         self.qSplitter.insertWidget(1,self.easyEaTree)
         self.setCentralWidget(self.qSplitter)
-        self.connect(self.easyTree,SIGNAL('itemClicked(QTreeWidgetItem*, int)'),self.easyTreeClicked) 
+        #self.connect(self.easyTree,SIGNAL('itemClicked(QTreeWidgetItem*, int)'),self.easyTreeClicked) 
+        self.easyTree.itemClicked.connect(self.easyTreeClicked)
         self.showTableWidget(self.easyFeeTree)
 
     def showTableWidget(self,widget):

@@ -1,10 +1,11 @@
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 import sys,os
-from easyOs     import easyOsGui
-from easyCom  import easyComGui
-from easyNvM  import easyNvMGui
+from .easyOs     import easyOsGui
+from .easyCom  import easyComGui
+from .easyNvM  import easyNvMGui
 
 __all__ = ['easySAR']
 
@@ -42,35 +43,41 @@ class easySARGui(QMainWindow):
         sItem=QAction(self.tr('Open'),self) 
         sItem.setShortcut('Ctrl+O'); 
         sItem.setStatusTip('Open a OpenSAR configure file.')
-        self.connect(sItem,SIGNAL('triggered()'),self.mOpen)  
+        #self.connect(sItem,SIGNAL('triggered()'),self.mOpen)
+        sItem.triggered.connect(self.mOpen)
         tMenu.addAction(sItem) 
         ## Save Ctrl+S
         sItem=QAction(self.tr('Save'),self) 
         sItem.setShortcut('Ctrl+S'); 
         sItem.setStatusTip('Save the OpenSAR configure file.')
-        self.connect(sItem,SIGNAL('triggered()'),self.mSave)  
+        #self.connect(sItem,SIGNAL('triggered()'),self.mSave)
+        sItem.triggered.connect(self.mSave)
         tMenu.addAction(sItem)  
         ## Save Ctrl+G
         sItem=QAction(self.tr('Generate'),self) 
         sItem.setShortcut('Ctrl+G'); 
         sItem.setStatusTip('Convert the OpenSAR configure file to C Code.')
-        self.connect(sItem,SIGNAL('triggered()'),self.mGen)  
+        #self.connect(sItem,SIGNAL('triggered()'),self.mGen)
+        sItem.triggered.connect(self.mGen)
         tMenu.addAction(sItem)
         # easySAR Module
         tMenu=self.menuBar().addMenu(self.tr('Module'))
         ## easyOs
         sItem=QAction(self.tr('easyOs'),self) 
-        self.connect(sItem,SIGNAL('triggered()'),self.measyOs) 
+        #self.connect(sItem,SIGNAL('triggered()'),self.measyOs)
+        sItem.triggered.connect(self.measyOs)
         sItem.setStatusTip('Open easyOs console.') 
         tMenu.addAction(sItem) 
         ## easyCom
         sItem=QAction(self.tr('easyCom'),self) 
-        self.connect(sItem,SIGNAL('triggered()'),self.measyCom) 
+        #self.connect(sItem,SIGNAL('triggered()'),self.measyCom)
+        sItem.triggered.connect(self.measyCom)
         sItem.setStatusTip('Open easyCom console.') 
         tMenu.addAction(sItem) 
         ## easyNvM
         sItem=QAction(self.tr('easyNvM'),self) 
-        self.connect(sItem,SIGNAL('triggered()'),self.measyNvM) 
+        #self.connect(sItem,SIGNAL('triggered()'),self.measyNvM) 
+        sItem.triggered.connect(self.measyNvM)
         sItem.setStatusTip('Open easyNvM console.') 
         tMenu.addAction(sItem)          
     def mOpen(self,default=None):
@@ -153,7 +160,7 @@ class easySARGui(QMainWindow):
         self.statusBar.showMessage('easy OpenSAR Studio Platform',0)
         
 def easySAR():
-    qtApp = QtGui.QApplication(sys.argv)
+    qtApp = QApplication(sys.argv)
     if(os.name == 'nt'):
         qtApp.setFont(QFont('Consolas', 12)) 
     elif(os.name == 'posix'):

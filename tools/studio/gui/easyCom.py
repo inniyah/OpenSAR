@@ -1,6 +1,7 @@
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 import sys,os
 import xml.etree.ElementTree as ET
 
@@ -11,13 +12,14 @@ class easyComTree(QTreeWidget):
     def __init__(self,parent):  
         super(QTreeWidget,self).__init__(parent) 
         self.root =  parent
-        list = ['Signal Name','Start Bit','Bit Size','Msg','Bus','Format','Init Value','Comment']
-        self.setHeaderLabels(QStringList(list))
+        list_values = ['Signal Name','Start Bit','Bit Size','Msg','Bus','Format','Init Value','Comment']
+        self.setHeaderLabels(list(list_values))
         self.setColumnWidth(0,150)
         self.setColumnWidth(3,200)
         self.setColumnWidth(4,140)
-        self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
-    def itemSelectionChanged(self):
+        #self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+        self.itemSelectionChanged.connect(self.onItemSelectionChanged)
+    def onItemSelectionChanged(self):
         try:
             pTree = self.currentItem()
             name = self.itemWidget(pTree,0).text()
@@ -133,10 +135,10 @@ class easyComTree(QTreeWidget):
     RX=MsgName(CAN ID)
     TX=MsgName(CAN ID)""")
         bus = QComboBox()
-        bus.addItems(QStringList(['CANIF_CHL_HS','CANIF_CHL_LS']))
+        bus.addItems(list(['CANIF_CHL_HS','CANIF_CHL_LS']))
         bus.setCurrentIndex(bus.findText(sbus))
         format = QComboBox()
-        format.addItems(QStringList(['Motorola']))
+        format.addItems(list(['Motorola']))
         format.setCurrentIndex(format.findText(sformat))
         init = QLineEdit(sinit)
         comment = QLineEdit(scomment)
@@ -155,8 +157,8 @@ class easyDcmDefaultTree(QTreeWidget):
     def __init__(self,parent=None):  
         super(QTreeWidget,self).__init__(parent) 
         self.root =  parent
-        list = ['Not Supported','Not Supported']
-        self.setHeaderLabels(QStringList(list))
+        list_values = ['Not Supported','Not Supported']
+        self.setHeaderLabels(list(list_values))
         self.setColumnWidth(0,150)
     def updateAction(self):
         self.root.qAction1.setText('')
@@ -186,13 +188,14 @@ class twSession(QTreeWidget):
     def __init__(self,parent=None):  
         super(QTreeWidget,self).__init__(parent) 
         self.root =  parent
-        list = ['Name','Identifier','P2P','P2A','Comment']
-        self.setHeaderLabels(QStringList(list))
+        list_values = ['Name','Identifier','P2P','P2A','Comment']
+        self.setHeaderLabels(list(list_values))
         self.setColumnWidth(0,150)
         self.setColumnWidth(2,40)
         self.setColumnWidth(3,40)
-        self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
-    def itemSelectionChanged(self):
+        #self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+        self.itemSelectionChanged.connect(self.onItemSelectionChanged)
+    def onItemSelectionChanged(self):
         try:
             pTree = self.currentItem()
             name = self.itemWidget(pTree,0).text()
@@ -221,7 +224,7 @@ class twSession(QTreeWidget):
             self.deleteSession()
             
     def loadXML(self,ROOT):
-        print "## Load SessionControl!"
+        print("## Load SessionControl!")
         # delete all as reload
         for i in range(0,self.topLevelItemCount()):
             self.takeTopLevelItem(0)
@@ -287,13 +290,14 @@ class twSecurity(QTreeWidget):
     def __init__(self,parent=None):  
         super(QTreeWidget,self).__init__(parent) 
         self.root =  parent
-        list = ['Name','Identifier','P2P','P2A','KeySize','SeedSize','Comment']
-        self.setHeaderLabels(QStringList(list))
+        list_values = ['Name','Identifier','P2P','P2A','KeySize','SeedSize','Comment']
+        self.setHeaderLabels(list(list_values))
         self.setColumnWidth(0,150)
         self.setColumnWidth(2,40)
         self.setColumnWidth(3,40)
-        self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
-    def itemSelectionChanged(self):
+        #self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+        self.itemSelectionChanged.connect(self.onItemSelectionChanged)
+    def onItemSelectionChanged(self):
         try:
             pTree = self.currentItem()
             name = self.itemWidget(pTree,0).text()
@@ -322,7 +326,7 @@ class twSecurity(QTreeWidget):
             self.deleteSecurity()
             
     def loadXML(self,ROOT):
-        print "## Load SecurityAccess!"
+        print("## Load SecurityAccess!")
         # delete all as reload
         for i in range(0,self.topLevelItemCount()):
             self.takeTopLevelItem(0)
@@ -396,15 +400,16 @@ class twEcuReset(QTreeWidget):
     def __init__(self,parent=None):  
         super(QTreeWidget,self).__init__(parent) 
         self.root =  parent
-        list = ['Name','P2P','P2A','Comment','']
-        self.setHeaderLabels(QStringList(list))
+        list_values = ['Name','P2P','P2A','Comment','']
+        self.setHeaderLabels(list(list_values))
         self.setColumnWidth(0,150)
         self.setColumnWidth(1,150)
         self.setColumnWidth(2,40)
         self.setColumnWidth(3,600)
         self.addRoot()
-        self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
-    def itemSelectionChanged(self):
+        #self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+        self.itemSelectionChanged.connect(self.onItemSelectionChanged)
+    def onItemSelectionChanged(self):
         pTree = self.currentItem()
         name = self.itemWidget(pTree,0).text()
         # update Action 
@@ -418,7 +423,7 @@ class twEcuReset(QTreeWidget):
         else:
             ref = str(self.itemWidget(pTree,1).currentText())
             self.itemWidget(pTree,1).clear()
-            self.itemWidget(pTree,1).addItems(QStringList(self.root.GetList(name)))
+            self.itemWidget(pTree,1).addItems(list(self.root.GetList(name)))
             self.itemWidget(pTree,1).setCurrentIndex(self.itemWidget(pTree,1).findText(ref))
             
             self.root.qAction1.setText('Delete %sRef <%s>'%(name,ref))
@@ -454,7 +459,7 @@ class twEcuReset(QTreeWidget):
             index = pTree.indexOfChild(self.currentItem())
             pTree.takeChild(index)
         else:
-            print 'system error when remove event.'
+            print('system error when remove event.')
     def addSubRef(self,RefName,Node=None):
         pItem = self.currentItem()
         Item = QTreeWidgetItem()
@@ -474,7 +479,7 @@ class twEcuReset(QTreeWidget):
         name = QLineEdit(sName)
         name.setDisabled(True)
         ref = QComboBox()
-        ref.addItems(QStringList(self.root.GetList(sName)))
+        ref.addItems(list(self.root.GetList(sName)))
         ref.setCurrentIndex(ref.findText(sRef))
         comment =QLineEdit(scomment)
         self.setItemWidget(Item,0,name)
@@ -483,7 +488,7 @@ class twEcuReset(QTreeWidget):
         pItem.setExpanded(True)
  
     def loadXML(self,ROOT):
-        print "## Load EcuReset!"
+        print("## Load EcuReset!")
         # delete all as reload
         for i in range(0,self.topLevelItemCount()):
             self.takeTopLevelItem(0)
@@ -546,15 +551,16 @@ class twCommunicationControl(QTreeWidget):
     def __init__(self,parent=None):  
         super(QTreeWidget,self).__init__(parent) 
         self.root =  parent
-        list = ['Name','P2P','P2A','Comment','']
-        self.setHeaderLabels(QStringList(list))
+        list_values = ['Name','P2P','P2A','Comment','']
+        self.setHeaderLabels(list(list_values))
         self.setColumnWidth(0,150)
         self.setColumnWidth(1,150)
         self.setColumnWidth(2,40)
         self.setColumnWidth(3,600)
         self.addRoot()
-        self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
-    def itemSelectionChanged(self):
+        #self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+        self.itemSelectionChanged.connect(self.onItemSelectionChanged)
+    def onItemSelectionChanged(self):
         pTree = self.currentItem()
         name = self.itemWidget(pTree,0).text()
         # update Action 
@@ -568,7 +574,7 @@ class twCommunicationControl(QTreeWidget):
         else:
             ref = str(self.itemWidget(pTree,1).currentText())
             self.itemWidget(pTree,1).clear()
-            self.itemWidget(pTree,1).addItems(QStringList(self.root.GetList(name)))
+            self.itemWidget(pTree,1).addItems(list(self.root.GetList(name)))
             self.itemWidget(pTree,1).setCurrentIndex(self.itemWidget(pTree,1).findText(ref))
             
             self.root.qAction1.setText('Delete %sRef <%s>'%(name,ref))
@@ -604,7 +610,7 @@ class twCommunicationControl(QTreeWidget):
             index = pTree.indexOfChild(self.currentItem())
             pTree.takeChild(index)
         else:
-            print 'system error when remove event.'
+            print('system error when remove event.')
     def addSubRef(self,RefName,Node=None):
         pItem = self.currentItem()
         Item = QTreeWidgetItem()
@@ -624,7 +630,7 @@ class twCommunicationControl(QTreeWidget):
         name = QLineEdit(sName)
         name.setDisabled(True)
         ref = QComboBox()
-        ref.addItems(QStringList(self.root.GetList(sName)))
+        ref.addItems(list(self.root.GetList(sName)))
         ref.setCurrentIndex(ref.findText(sRef))
         comment =QLineEdit(scomment)
         self.setItemWidget(Item,0,name)
@@ -633,7 +639,7 @@ class twCommunicationControl(QTreeWidget):
         pItem.setExpanded(True)
  
     def loadXML(self,ROOT):
-        print "## Load CommunicationControl!"
+        print("## Load CommunicationControl!")
         # delete all as reload
         for i in range(0,self.topLevelItemCount()):
             self.takeTopLevelItem(0)
@@ -696,15 +702,16 @@ class twRWDID(QTreeWidget):
     def __init__(self,parent=None):  
         super(QTreeWidget,self).__init__(parent) 
         self.root =  parent
-        list = ['Name','Identifier','Attribute','P2P','P2A','Comment','']
-        self.setHeaderLabels(QStringList(list))
+        list_values = ['Name','Identifier','Attribute','P2P','P2A','Comment','']
+        self.setHeaderLabels(list(list_values))
         self.setColumnWidth(0,150)
         self.setColumnWidth(1,150)
         self.setColumnWidth(3,40)
         self.setColumnWidth(4,40)
         self.setColumnWidth(5,600)
-        self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
-    def itemSelectionChanged(self):
+        #self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+        self.itemSelectionChanged.connect(self.onItemSelectionChanged)
+    def onItemSelectionChanged(self):
         pTree = self.currentItem()
         name = self.itemWidget(pTree,0).text()
         if(self.indexOfTopLevelItem(pTree) != -1):
@@ -720,7 +727,7 @@ class twRWDID(QTreeWidget):
         else:
             ref = str(self.itemWidget(pTree,1).currentText())
             self.itemWidget(pTree,1).clear()
-            self.itemWidget(pTree,1).addItems(QStringList(self.root.GetList(name)))
+            self.itemWidget(pTree,1).addItems(list(self.root.GetList(name)))
             self.itemWidget(pTree,1).setCurrentIndex(self.itemWidget(pTree,1).findText(ref))
             
             self.root.qAction1.setText('Delete %sRef <%s>'%(name,ref))
@@ -763,7 +770,7 @@ class twRWDID(QTreeWidget):
             index = pTree.indexOfChild(self.currentItem())
             pTree.takeChild(index)
         else:
-            print 'system error when remove event.'
+            print('system error when remove event.')
     def addSubRef(self,RefName,Node=None):
         pItem = self.currentItem()
         Item = QTreeWidgetItem()
@@ -783,7 +790,7 @@ class twRWDID(QTreeWidget):
         name = QLineEdit(sName)
         name.setDisabled(True)
         ref = QComboBox()
-        ref.addItems(QStringList(self.root.GetList(sName)))
+        ref.addItems(list(self.root.GetList(sName)))
         ref.setCurrentIndex(ref.findText(sRef))
         comment =QLineEdit(scomment)
         self.setItemWidget(Item,0,name)
@@ -792,7 +799,7 @@ class twRWDID(QTreeWidget):
         pItem.setExpanded(True)
  
     def loadXML(self,ROOT):
-        print "## Load ReadWriteByIdentifier!"
+        print("## Load ReadWriteByIdentifier!")
         # delete all as reload
         for i in range(0,self.topLevelItemCount()):
             self.takeTopLevelItem(0)
@@ -852,7 +859,7 @@ P.S: For DDD, request Identifier is either 0xF2** or 0xF3**, so normally, Identi
      shouldn\'t be 0xF3**.
         """)
         attribute = QComboBox()
-        attribute.addItems(QStringList(['r','rw','rp','rwp','rd','rwd','rpd','rwpd','w']))
+        attribute.addItems(list(['r','rw','rp','rwp','rd','rwd','rpd','rwpd','w']))
         attribute.setCurrentIndex(attribute.findText(sattribute))
         attribute.setToolTip("""
 r=readable
@@ -879,15 +886,16 @@ class twIOConrol(QTreeWidget):
     def __init__(self,parent=None):  
         super(QTreeWidget,self).__init__(parent) 
         self.root =  parent
-        list = ['Name','Identifier','Info','P2P','P2A','Comment','']
-        self.setHeaderLabels(QStringList(list))
+        list_values = ['Name','Identifier','Info','P2P','P2A','Comment','']
+        self.setHeaderLabels(list(list_values))
         self.setColumnWidth(0,150)
         self.setColumnWidth(1,150)
         self.setColumnWidth(3,40)
         self.setColumnWidth(4,40)
         self.setColumnWidth(5,600)
-        self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
-    def itemSelectionChanged(self):
+        #self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+        self.itemSelectionChanged.connect(self.onItemSelectionChanged)
+    def onItemSelectionChanged(self):
         pTree = self.currentItem()
         name = self.itemWidget(pTree,0).text()
         if(self.indexOfTopLevelItem(pTree) != -1):
@@ -903,7 +911,7 @@ class twIOConrol(QTreeWidget):
         else:
             ref = str(self.itemWidget(pTree,1).currentText())
             self.itemWidget(pTree,1).clear()
-            self.itemWidget(pTree,1).addItems(QStringList(self.root.GetList(name)))
+            self.itemWidget(pTree,1).addItems(list(self.root.GetList(name)))
             self.itemWidget(pTree,1).setCurrentIndex(self.itemWidget(pTree,1).findText(ref))
             
             self.root.qAction1.setText('Delete %sRef <%s>'%(name,ref))
@@ -946,7 +954,7 @@ class twIOConrol(QTreeWidget):
             index = pTree.indexOfChild(self.currentItem())
             pTree.takeChild(index)
         else:
-            print 'system error when remove event.'
+            print('system error when remove event.')
     def addSubRef(self,RefName,Node=None):
         pItem = self.currentItem()
         Item = QTreeWidgetItem()
@@ -966,7 +974,7 @@ class twIOConrol(QTreeWidget):
         name = QLineEdit(sName)
         name.setDisabled(True)
         ref = QComboBox()
-        ref.addItems(QStringList(self.root.GetList(sName)))
+        ref.addItems(list(self.root.GetList(sName)))
         ref.setCurrentIndex(ref.findText(sRef))
         comment =QLineEdit(scomment)
         self.setItemWidget(Item,0,name)
@@ -975,7 +983,7 @@ class twIOConrol(QTreeWidget):
         pItem.setExpanded(True)
  
     def loadXML(self,ROOT):
-        print "## Load InputOutputControl!"
+        print("## Load InputOutputControl!")
         # delete all as reload
         for i in range(0,self.topLevelItemCount()):
             self.takeTopLevelItem(0)
@@ -1061,15 +1069,16 @@ class twRoutineConrol(QTreeWidget):
     def __init__(self,parent=None):  
         super(QTreeWidget,self).__init__(parent) 
         self.root =  parent
-        list = ['Name','Identifier','Info','P2P','P2A','Comment','']
-        self.setHeaderLabels(QStringList(list))
+        list_values = ['Name','Identifier','Info','P2P','P2A','Comment','']
+        self.setHeaderLabels(list(list_values))
         self.setColumnWidth(0,150)
         self.setColumnWidth(1,150)
         self.setColumnWidth(3,40)
         self.setColumnWidth(4,40)
         self.setColumnWidth(5,600)
-        self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
-    def itemSelectionChanged(self):
+        #self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+        self.itemSelectionChanged.connect(self.onItemSelectionChanged)
+    def onItemSelectionChanged(self):
         pTree = self.currentItem()
         name = self.itemWidget(pTree,0).text()
         if(self.indexOfTopLevelItem(pTree) != -1):
@@ -1085,7 +1094,7 @@ class twRoutineConrol(QTreeWidget):
         else:
             ref = str(self.itemWidget(pTree,1).currentText())
             self.itemWidget(pTree,1).clear()
-            self.itemWidget(pTree,1).addItems(QStringList(self.root.GetList(name)))
+            self.itemWidget(pTree,1).addItems(list(self.root.GetList(name)))
             self.itemWidget(pTree,1).setCurrentIndex(self.itemWidget(pTree,1).findText(ref))
             
             self.root.qAction1.setText('Delete %sRef <%s>'%(name,ref))
@@ -1128,7 +1137,7 @@ class twRoutineConrol(QTreeWidget):
             index = pTree.indexOfChild(self.currentItem())
             pTree.takeChild(index)
         else:
-            print 'system error when remove event.'
+            print('system error when remove event.')
     def addSubRef(self,RefName,Node=None):
         pItem = self.currentItem()
         Item = QTreeWidgetItem()
@@ -1148,7 +1157,7 @@ class twRoutineConrol(QTreeWidget):
         name = QLineEdit(sName)
         name.setDisabled(True)
         ref = QComboBox()
-        ref.addItems(QStringList(self.root.GetList(sName)))
+        ref.addItems(list(self.root.GetList(sName)))
         ref.setCurrentIndex(ref.findText(sRef))
         comment =QLineEdit(scomment)
         self.setItemWidget(Item,0,name)
@@ -1157,7 +1166,7 @@ class twRoutineConrol(QTreeWidget):
         pItem.setExpanded(True)
  
     def loadXML(self,ROOT):
-        print "## Load RoutineControl!"
+        print("## Load RoutineControl!")
         # delete all as reload
         for i in range(0,self.topLevelItemCount()):
             self.takeTopLevelItem(0)
@@ -1261,11 +1270,11 @@ class easyComCfgTree(QTreeWidget):
     def __init__(self,parent=None):  
         super(QTreeWidget,self).__init__(parent)
         self.setHeaderLabel('easyCom')
-        self.addTopLevelItem(QTreeWidgetItem(QStringList('Com')))
-        Item = QTreeWidgetItem(QStringList('Dcm')) 
+        self.addTopLevelItem(QTreeWidgetItem(list('Com')))
+        Item = QTreeWidgetItem(list('Dcm')) 
         self.addTopLevelItem(Item)
         for tw in dcm_TreeTable:
-            Item.addChild(QTreeWidgetItem(QStringList(tw[0])))
+            Item.addChild(QTreeWidgetItem(list(tw[0])))
         Item.setExpanded(True)
         self.setMaximumWidth(350); 
 
@@ -1301,29 +1310,34 @@ class easyComGui(QMainWindow):
         qAction =QAction(self)
         qAction.setIcon(QIcon('./res/move_up.bmp'))
         qAction.setStatusTip('move the Selected signal up')
-        self.connect(qAction,SIGNAL('triggered()'),self.on_move_up) 
+        #self.connect(qAction,SIGNAL('triggered()'),self.on_move_up) 
+        qAction.triggered.connect(self.on_move_up)
         self.menuBar().addAction(qAction)
         
         qAction =QAction(self)
         qAction.setIcon(QIcon('./res/move_down.bmp'))
         qAction.setStatusTip('move the Selected signal up')
-        self.connect(qAction,SIGNAL('triggered()'),self.on_move_down)
+        #self.connect(qAction,SIGNAL('triggered()'),self.on_move_down)
+        qAction.triggered.connect(self.on_move_down)
         self.menuBar().addAction(qAction)
         
         self.menuBar().addSeparator()
         #  create Three three Action
         self.qAction1=QAction(self.tr('Action1'),self) 
-        self.connect(self.qAction1,SIGNAL('triggered()'),self.mqAction1) 
+        #self.connect(self.qAction1,SIGNAL('triggered()'),self.mqAction1) 
+        self.qAction1.triggered.connect(self.mqAction1)
         self.menuBar().addAction(self.qAction1)
         self.qAction1.setDisabled(True)
         
         self.qAction2=QAction(self.tr('Action2'),self) 
-        self.connect(self.qAction2,SIGNAL('triggered()'),self.mqAction2) 
+        #self.connect(self.qAction2,SIGNAL('triggered()'),self.mqAction2) 
+        self.qAction2.triggered.connect(self.mqAction2)
         self.menuBar().addAction(self.qAction2)
         self.qAction2.setDisabled(True)
         
         self.qAction3=QAction(self.tr('Action3'),self) 
-        self.connect(self.qAction3,SIGNAL('triggered()'),self.mqAction3) 
+        #self.connect(self.qAction3,SIGNAL('triggered()'),self.mqAction3) 
+        self.qAction3.triggered.connect(self.mqAction3)
         self.menuBar().addAction(self.qAction3)
         self.qAction3.setDisabled(True)
         
@@ -1363,7 +1377,8 @@ so hand work based on the code generated by easyCom is needed.
             id += 1
         self.showTableWidget(self.easyComTree)
         self.setCentralWidget(self.qSplitter)
-        self.connect(self.easyTree,SIGNAL('itemClicked(QTreeWidgetItem*, int)'),self.easyTreeClicked)  
+        #self.connect(self.easyTree,SIGNAL('itemClicked(QTreeWidgetItem*, int)'),self.easyTreeClicked)
+        self.easyTree.itemClicked.connect(self.easyTreeClicked)
     def showTableWidget(self,widget):
         for wd in self.DcmWidgetList:
             if(wd[0] == widget):

@@ -74,8 +74,8 @@ def GLGet(what):
                        pdu.append(Signal.attrib['bus'])
                        rlist.append(pdu)
             except:
-                print traceback.format_exc()
-                print 'CanIf: Error Message Configured for %s'%(Signal.attrib['name'])
+                print(traceback.format_exc())
+                print('CanIf: Error Message Configured for %s'%(Signal.attrib['name']))
     elif(what == 'RxPdu'):
         for Signal in __root.find('SignalList'):
             msg = Signal.attrib['msg']
@@ -95,8 +95,8 @@ def GLGet(what):
                        pdu.append(Signal.attrib['bus'])
                        rlist.append(pdu)
             except:
-                print traceback.format_exc()
-                print 'CanIf: Error Message Configured for %s'%(Signal.attrib['name'])
+                print(traceback.format_exc())
+                print('CanIf: Error Message Configured for %s'%(Signal.attrib['name']))
     return rlist
 def GenH():
     global __dir

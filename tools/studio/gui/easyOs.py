@@ -1,6 +1,7 @@
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 import sys,os
 import xml.etree.ElementTree as ET
 
@@ -11,18 +12,19 @@ class easyCounterCfgTree(QTreeWidget):
     def __init__(self,parent):  
         super(QTreeWidget,self).__init__(parent) 
         self.root = parent
-        list = ['Counter Name','Max Allowed Value','Ticks Per Base','Min Cycle']
-        self.setHeaderLabels(QStringList(list))
+        list_values = ['Counter Name','Max Allowed Value','Ticks Per Base','Min Cycle']
+        self.setHeaderLabels(list(list_values))
         self.setColumnWidth(0,150)
-        self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+        #self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+        self.itemSelectionChanged.connect(self.onItemSelectionChanged)
     def getCounterNameList(self):
-        list = []
+        list_values = []
         for i in range(0,self.topLevelItemCount()):
             treeI = self.topLevelItem(i)
-            list.append(self.itemWidget(treeI,0).text()) 
-        return list 
+            list_values.append(self.itemWidget(treeI,0).text()) 
+        return list_values 
 
-    def itemSelectionChanged(self):
+    def onItemSelectionChanged(self):
         try:
             treeItem = self.currentItem()
             name = self.itemWidget(treeItem,0).text()
@@ -93,11 +95,12 @@ class easyAlarmCfgTree(QTreeWidget):
     def __init__(self,parent):  
         super(QTreeWidget,self).__init__(parent) 
         self.root = parent
-        list = ['Alarm Name','Owner Counter','Autostart','App Mode',
+        list_values = ['Alarm Name','Owner Counter','Autostart','App Mode',
                 'Start Time','Cycle','Action','Task/Counter/Cbk','Event']
-        self.setHeaderLabels(QStringList(list))
+        self.setHeaderLabels(list(list_values))
         self.setColumnWidth(0,150)
-        self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+        #self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+        self.itemSelectionChanged.connect(self.onItemSelectionChanged)
     def toXML(self):
         List = ET.Element('AlarmList')
         for i in range(0,self.topLevelItemCount()):
@@ -138,7 +141,7 @@ class easyAlarmCfgTree(QTreeWidget):
         event = QComboBox()
         event.setMaximumWidth(300)
         self.setItemWidget(treeItem,8,event)
-        event.addItems(QStringList(self.root.easyTaskTree.getTaskEventList(str(Task))))
+        event.addItems(list(self.root.easyTaskTree.getTaskEventList(str(Task))))
         event.setCurrentIndex(event.findText(currentEvent))
     def currentIndexChanged_Action(self,Action):
         """ Call Back for Action"""
@@ -151,7 +154,7 @@ class easyAlarmCfgTree(QTreeWidget):
             task = QComboBox()
             self.setItemWidget(treeItem,7,task)
             self.setItemWidget(treeItem,8,None)
-            task.addItems(QStringList(self.root.easyTaskTree.getTaskNameList()))
+            task.addItems(list(self.root.easyTaskTree.getTaskNameList()))
             task.setCurrentIndex(task.findText(currentTask))
         elif('SetEvent' == Action):
             try:
@@ -162,18 +165,19 @@ class easyAlarmCfgTree(QTreeWidget):
                 currentEvent = self.itemWidget(treeItem,8).currentText()
             except:
                 currentEvent = ''
-            #print currentTask,currentEvent
+            #print(currentTask,currentEvent)
             task = QComboBox()
             event = QComboBox()
             event.setMaximumWidth(300)
             self.setItemWidget(treeItem,7,task)
             self.setItemWidget(treeItem,8,event)
-            event.addItems(QStringList(self.root.easyTaskTree.getTaskEventList(currentTask)))
+            event.addItems(list(self.root.easyTaskTree.getTaskEventList(currentTask)))
             event.setCurrentIndex(event.findText(currentEvent))
-            task.addItems(QStringList(self.root.easyTaskTree.getTaskNameList('Event')))
+            task.addItems(list(self.root.easyTaskTree.getTaskNameList('Event')))
             task.setCurrentIndex(task.findText(currentTask))
             self.currentIndexChanged_Task(currentTask)
-            self.connect(task,SIGNAL('currentIndexChanged(QString)'),self.currentIndexChanged_Task)
+            #self.connect(task,SIGNAL('currentIndexChanged(QString)'),self.currentIndexChanged_Task)
+            task.currentIndexChanged.connect(self.currentIndexChanged_Task)
         elif('IncrementCounter' == Action):
             try:
                 currentCounter = self.itemWidget(treeItem,7).currentText()
@@ -182,7 +186,7 @@ class easyAlarmCfgTree(QTreeWidget):
             counter = QComboBox()
             self.setItemWidget(treeItem,7,counter)
             self.setItemWidget(treeItem,8,None)
-            counter.addItems(QStringList(self.root.easyCounterTree.getCounterNameList()))
+            counter.addItems(list(self.root.easyCounterTree.getCounterNameList()))
             counter.setCurrentIndex(counter.findText(currentCounter))
         elif('AlarmCallBack' == Action):
             try:
@@ -192,7 +196,7 @@ class easyAlarmCfgTree(QTreeWidget):
             cbk = QLineEdit('%s_Cbk'%(self.itemWidget(treeItem,0).text()))
             self.setItemWidget(treeItem,7,cbk)
             self.setItemWidget(treeItem,8,None)
-    def itemSelectionChanged(self):
+    def onItemSelectionChanged(self):
         try:
             treeItem = self.currentItem()
             alarm = self.itemWidget(treeItem,0).text()
@@ -209,7 +213,7 @@ class easyAlarmCfgTree(QTreeWidget):
             counter = self.itemWidget(treeItem,1)
             currentCounter = counter.currentText()
             counter.clear()
-            counter.addItems(QStringList(self.root.easyCounterTree.getCounterNameList()))
+            counter.addItems(list(self.root.easyCounterTree.getCounterNameList()))
             counter.setCurrentIndex(counter.findText(currentCounter))
         except:
             self.root.qAction1.setDisabled(True)
@@ -249,10 +253,10 @@ class easyAlarmCfgTree(QTreeWidget):
             owner.addItem(sowner)
         owner.setCurrentIndex(owner.findText(sowner))
         autostart = QComboBox()
-        autostart.addItems(QStringList(['False','Relative','Absolute']))
+        autostart.addItems(list(['False','Relative','Absolute']))
         autostart.setCurrentIndex(autostart.findText(sautostart))
         appmode = QComboBox()
-        appmode.addItems(QStringList(['OSDEFAULTAPPMODE']))
+        appmode.addItems(list(['OSDEFAULTAPPMODE']))
         if(sappmode != 'OSDEFAULTAPPMODE' and sappmode != ''):
             appmode.addItem(sappmode)
         appmode.setCurrentIndex(appmode.findText(sappmode))
@@ -263,8 +267,9 @@ class easyAlarmCfgTree(QTreeWidget):
         cycle.setRange(0,65535)
         cycle.setValue(scycle)
         action = QComboBox()
-        action.addItems(QStringList(['ActivateTask','SetEvent','IncrementCounter','AlarmCallBack']))
-        self.connect(action,SIGNAL('currentIndexChanged(QString)'),self.currentIndexChanged_Action)
+        action.addItems(list(['ActivateTask','SetEvent','IncrementCounter','AlarmCallBack']))
+        #self.connect(action,SIGNAL('currentIndexChanged(QString)'),self.currentIndexChanged_Action)
+        action.currentIndexChanged.connect(self.currentIndexChanged_Action)
         action.setStatusTip('Note: Selected the item firstly, and then do a action!')
         action.setCurrentIndex(action.findText(saction))
         if(saction == 'AlarmCallBack'):
@@ -299,11 +304,12 @@ class easyTaskCfgTree(QTreeWidget):
     def __init__(self,parent):  
         super(QTreeWidget,self).__init__(parent) 
         self.root =  parent
-        list = ['Task Name','Stack Size','Priority','Activation','Autostart','Schedule']
-        self.setHeaderLabels(QStringList(list))
+        list_values = ['Task Name','Stack Size','Priority','Activation','Autostart','Schedule']
+        self.setHeaderLabels(list(list_values))
         self.setColumnWidth(0,150)
-        self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
-    def itemSelectionChanged(self):
+        #self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+        self.itemSelectionChanged.connect(self.onItemSelectionChanged)
+    def onItemSelectionChanged(self):
         try:
             treeItem = self.currentItem()
             if(self.indexOfTopLevelItem(treeItem) != -1):
@@ -360,27 +366,27 @@ class easyTaskCfgTree(QTreeWidget):
             self.addTask(Task)
 
     def getTaskNameList(self,option = None):
-        list = []
+        list_values = []
         if(option == None):
             for i in range(0,self.topLevelItemCount()):
                 treeTask = self.topLevelItem(i)
-                list.append(self.itemWidget(treeTask,0).text())
+                list_values.append(self.itemWidget(treeTask,0).text())
         elif(option == 'Event'):
             for i in range(0,self.topLevelItemCount()):
                 treeTask = self.topLevelItem(i)
                 if(treeTask.childCount() > 0):
-                    list.append(self.itemWidget(treeTask,0).text())
-        return list
+                    list_values.append(self.itemWidget(treeTask,0).text())
+        return list_values
     def getTaskEventList(self,name):
-        list = []
+        list_values = []
         for i in range(0,self.topLevelItemCount()):
             treeTask = self.topLevelItem(i)
             if(self.itemWidget(treeTask,0).text() == name):
                 for j in range(0,treeTask.childCount()):
                     treeEvent = treeTask.child(j)
-                    list.append(self.itemWidget(treeEvent,0).text())
+                    list_values.append(self.itemWidget(treeEvent,0).text())
                 break
-        return list
+        return list_values
     def addTask(self,Task=None):
         treeItem = QTreeWidgetItem()
         self.addTopLevelItem(treeItem)
@@ -414,11 +420,11 @@ class easyTaskCfgTree(QTreeWidget):
         Activation.setValue(sActivation)
         # Autostart
         autostart = QComboBox()
-        autostart.addItems(QStringList(['True','False']))
+        autostart.addItems(list(['True','False']))
         autostart.setCurrentIndex(autostart.findText(sAutostart))
         # Schedule
         Schedule = QComboBox()
-        Schedule.addItems(QStringList(['NON','FULL'])) 
+        Schedule.addItems(list(['NON','FULL'])) 
         Schedule.setCurrentIndex(Schedule.findText(sSchedule))
         Schedule.setMaximumWidth(100)
         self.setItemWidget(treeItem,0,taskName)    
@@ -458,7 +464,7 @@ class easyTaskCfgTree(QTreeWidget):
             index = pTree.indexOfChild(self.currentItem())
             pTree.takeChild(index)
         else:
-            print 'system error when remove event.'
+            print('system error when remove event.')
             
     def deleteTask(self):
         if(self.indexOfTopLevelItem(self.currentItem()) != -1):
@@ -470,12 +476,12 @@ class easyOsCfgTree(QTreeWidget):
     def __init__(self,parent=None):  
         super(QTreeWidget,self).__init__(parent)
         self.setHeaderLabel('easyOs')
-        self.addTopLevelItem(QTreeWidgetItem(QStringList('General')))
-        self.addTopLevelItem(QTreeWidgetItem(QStringList('Application')))
-        self.addTopLevelItem(QTreeWidgetItem(QStringList('Task')))
-        self.addTopLevelItem(QTreeWidgetItem(QStringList('Counter')))
-        self.addTopLevelItem(QTreeWidgetItem(QStringList('Alarm')))
-        self.addTopLevelItem(QTreeWidgetItem(QStringList('ISR')))
+        self.addTopLevelItem(QTreeWidgetItem(list('General')))
+        self.addTopLevelItem(QTreeWidgetItem(list('Application')))
+        self.addTopLevelItem(QTreeWidgetItem(list('Task')))
+        self.addTopLevelItem(QTreeWidgetItem(list('Counter')))
+        self.addTopLevelItem(QTreeWidgetItem(list('Alarm')))
+        self.addTopLevelItem(QTreeWidgetItem(list('ISR')))
         self.setMaximumWidth(200); 
 
 # this is the root configuration of OpenSAR os
@@ -493,12 +499,14 @@ class easyOsGui(QMainWindow):
     def creMenu(self):
         #  create Three three Action
         self.qAction1=QAction(self.tr('Action1'),self) 
-        self.connect(self.qAction1,SIGNAL('triggered()'),self.mqAction1) 
+        #self.connect(self.qAction1,SIGNAL('triggered()'),self.mqAction1) 
+        self.qAction1.triggered.connect(self.mqAction1)
         self.menuBar().addAction(self.qAction1)
         self.qAction1.setDisabled(True)
         
         self.qAction2=QAction(self.tr('Action2'),self) 
-        self.connect(self.qAction2,SIGNAL('triggered()'),self.mqAction2) 
+        #self.connect(self.qAction2,SIGNAL('triggered()'),self.mqAction2)
+        self.qAction2.triggered.connect(self.mqAction2)
         self.menuBar().addAction(self.qAction2)
         self.qAction2.setDisabled(True)
     def mqAction1(self):
@@ -527,7 +535,8 @@ class easyOsGui(QMainWindow):
         self.qSplitter.insertWidget(1,self.easyCounterTree)
         self.showTableWidget(self.easyAlarmTree)
         self.setCentralWidget(self.qSplitter)
-        self.connect(self.easyTree,SIGNAL('itemClicked(QTreeWidgetItem*, int)'),self.easyTreeClicked)  
+        #self.connect(self.easyTree,SIGNAL('itemClicked(QTreeWidgetItem*, int)'),self.easyTreeClicked)
+        self.easyTree.itemClicked.connect(self.easyTreeClicked)
     def showTableWidget(self,widget):
         if(self.easyTaskTree == widget):
             self.easyTaskTree.setVisible(True);

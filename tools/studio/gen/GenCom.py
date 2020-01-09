@@ -1,9 +1,9 @@
 import sys,os
 import xml.etree.ElementTree as ET
-from GenCanIf import GenCanIf
-from GenCanTp import GenCanTp
-from GenPduR import GenPduR
-from GenDcm import GenDcm
+from .GenCanIf import GenCanIf
+from .GenCanTp import GenCanTp
+from .GenPduR import GenPduR
+from .GenDcm import GenDcm
 
 __all__ = ['GenCom']
 
@@ -38,7 +38,7 @@ def GenCom(wfxml):
     GenH()
     GenC()
     GenPy()
-    print '>>> Gen Com DONE <<<'
+    print('>>> Gen Com DONE <<<')
 
 
 def tInt(strnum):
@@ -125,8 +125,8 @@ def GLGet(what,which = None):
                        pdu.append(Signal.attrib['bus'])
                        rlist.append(pdu)
             except:
-                print traceback.format_exc()
-                print 'PduR: Error Message Configured for %s'%(Signal.attrib['name'])
+                print(traceback.format_exc())
+                print('PduR: Error Message Configured for %s'%(Signal.attrib['name']))
     elif(what == 'RxPdu'):
         for Signal in __root.find('SignalList'):
             msg = Signal.attrib['msg']
@@ -146,8 +146,8 @@ def GLGet(what,which = None):
                        pdu.append(Signal.attrib['bus'])
                        rlist.append(pdu)
             except:
-                print traceback.format_exc()
-                print 'PduR: Error Message Configured for %s'%(Signal.attrib['name'])
+                print(traceback.format_exc())
+                print('PduR: Error Message Configured for %s'%(Signal.attrib['name']))
     return rlist
 
 def GenH():
@@ -518,7 +518,7 @@ def lSetDebug(on):
     lDebugOn = on
 def lDebug(stri):
     if(lDebugOn == True):
-        print stri 
+        print(stri)
     \n""")
     fp.write('cPduTx=0\ncPduRx=1\n')
     cstr = '# Id Ref of Pdu\n'
@@ -671,7 +671,7 @@ class ComServerTx(threading.Thread):
             sock.send(msg.data)
             sock.close()
         except:
-            print 'ERROR: CanBusServer isn\\'t started.'     
+            print('ERROR: CanBusServer isn\\'t started.')
 class ComServerRx(threading.Thread): 
     __rxPort = 60001
     def __init__(self,rxPort=60001):
@@ -687,7 +687,7 @@ class ComServerRx(threading.Thread):
                 for i in range(0,8):
                     data[i] = ord(msg[5+i])
                 break
-                print pdu
+                print(pdu)
     def run(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  
         sock.bind(('127.0.0.1', self.__rxPort))  

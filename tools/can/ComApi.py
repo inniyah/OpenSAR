@@ -12,7 +12,7 @@ def lSetDebug(on):
     lDebugOn = on
 def lDebug(stri):
     if(lDebugOn == True):
-        print stri 
+        print(stri)
     
 cPduTx=0
 cPduRx=1
@@ -226,7 +226,7 @@ class ComServerTx(threading.Thread):
             sock.send(msg.data)
             sock.close()
         except:
-            print 'ERROR: CanBusServer isn\'t started.'     
+            print('ERROR: CanBusServer isn\'t started.')
 class ComServerRx(threading.Thread): 
     __rxPort = 60001
     def __init__(self,rxPort=60001):
@@ -242,7 +242,7 @@ class ComServerRx(threading.Thread):
                 for i in range(0,8):
                     data[i] = ord(msg[5+i])
                 break
-                print pdu
+                print(pdu)
     def run(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  
         sock.bind(('127.0.0.1', self.__rxPort))  

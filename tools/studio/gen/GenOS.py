@@ -51,7 +51,7 @@ def GenOS(wfxml):
     __dir = os.path.dirname(wfxml)
     GenH()
     GenC()
-    print '>>> Gen OS DONE <<<'
+    print('>>> Gen OS DONE <<<')
 
 def GenH():
     global __dir,__root

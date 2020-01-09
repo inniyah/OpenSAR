@@ -1,6 +1,7 @@
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 import sys,os
 import xml.etree.ElementTree as ET
 
@@ -26,7 +27,7 @@ class easyCanIfGeneral(QFrame):
     def loadXML(self,ROOT):
         Node = ROOT.find('General')
         if(Node == None):
-            print 'no configuration for CanIf General.'
+            print('no configuration for CanIf General.')
             return
         self.det.setChecked(bool(Node.attrib['det']))
         self.verinfo.setChecked(bool(Node.attrib['verinfo']))
@@ -37,8 +38,9 @@ class easyCanIfCfgTree(QTreeWidget):
     def __init__(self,parent):  
         super(QTreeWidget,self).__init__(parent)  
         self.root = parent
-        self.setHeaderLabels(QStringList(['Name','1','2','3','4','5']))
-        self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+        self.setHeaderLabels(list(['Name','1','2','3','4','5']))
+        #self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+        self.itemSelectionChanged.connect(self.onItemSelectionChanged)
         self.setColumnWidth(0,200)
         self.setColumnWidth(1,200)
         self.setColumnWidth(2,200)
@@ -76,7 +78,7 @@ class easyCanIfCfgTree(QTreeWidget):
             ref.setCurrentIndex(ref.findText(sref)) 
         else:
             self.itemSelectionChanged3() 
-    def itemSelectionChanged(self):
+    def onItemSelectionChanged(self):
         pTree = self.currentItem()
         if(self.indexOfTopLevelItem(pTree) != -1):
             name = self.itemWidget(pTree,0).text()
@@ -109,14 +111,14 @@ class easyCanIfCfgTree(QTreeWidget):
         
         name = QLineEdit(sname)
         type = QComboBox()
-        type.addItems(QStringList(['BASIC','FULL']))
+        type.addItems(list(['BASIC','FULL']))
         type.setCurrentIndex(type.findText(stype))
         
         ref = QComboBox()
-        list = []
+        list_values = []
         if(sref != ''):
-            list.append(sref)
-        ref.addItems(QStringList(list))
+            list_values.append(sref)
+        ref.addItems(list(list_values))
         ref.setCurrentIndex(ref.findText(sref))
         
         filter = QCheckBox('Software Filter')
@@ -143,14 +145,14 @@ class easyCanIfCfgTree(QTreeWidget):
         
         name = QLineEdit(sname)
         type = QComboBox()
-        type.addItems(QStringList(['BASIC','FULL']))
+        type.addItems(list(['BASIC','FULL']))
         type.setCurrentIndex(type.findText(stype))
         
         ref = QComboBox()
-        list = []
+        list_values = []
         if(sref != ''):
-            list.append(sref)
-        ref.addItems(QStringList(list))
+            list_values.append(sref)
+        ref.addItems(list(list_values))
         ref.setCurrentIndex(ref.findText(sref))
        
         self.setItemWidget(treeItem,0,name)
@@ -164,7 +166,7 @@ class easyCanIfCfgTree(QTreeWidget):
             index = pTree.indexOfChild(self.currentItem())
             pTree.takeChild(index)
         else:
-            print 'system error when remove HOH.'    
+            print('system error when remove HOH.')
     def deleteChannel(self):
         self.takeTopLevelItem(self.indexOfTopLevelItem(self.currentItem()))
 
@@ -179,7 +181,7 @@ class easyCanIfCfgTree(QTreeWidget):
             sctrl = ''   
         name = QLineEdit(sname)
         ctrl = QComboBox()
-        ctrl.addItems(QStringList(['CAN_CTRL_0','CAN_CTRL_1','CAN_CTRL_2','CAN_CTRL_3','CAN_CTRL_4']))
+        ctrl.addItems(list(['CAN_CTRL_0','CAN_CTRL_1','CAN_CTRL_2','CAN_CTRL_3','CAN_CTRL_4']))
         ctrl.setCurrentIndex(ctrl.findText(sctrl))
         ctrl.setToolTip('CanIf HW Controller Reference')
         ctrl.setStatusTip('CanIf HW Controller Reference')
@@ -246,17 +248,20 @@ class easyCanIfGui(QMainWindow):
     def creMenu(self):
         #  create Actions
         self.qAction1=QAction(self.tr('Add Channel'),self) 
-        self.connect(self.qAction1,SIGNAL('triggered()'),self.mqAction1) 
+        #self.connect(self.qAction1,SIGNAL('triggered()'),self.mqAction1)
+        self.qAction1.triggered.connect(self.mqAction1)
         self.menuBar().addAction(self.qAction1)
         self.qAction1.setDisabled(False)
         
         self.qAction2=QAction(self.tr('Action2'),self) 
-        self.connect(self.qAction2,SIGNAL('triggered()'),self.mqAction2) 
+        #self.connect(self.qAction2,SIGNAL('triggered()'),self.mqAction2)
+        self.qAction2.triggered.connect(self.mqAction2)
         self.menuBar().addAction(self.qAction2)
         self.qAction2.setDisabled(True)
         
         self.qAction3=QAction(self.tr('Action3'),self) 
-        self.connect(self.qAction3,SIGNAL('triggered()'),self.mqAction3) 
+        #self.connect(self.qAction3,SIGNAL('triggered()'),self.mqAction3)
+        self.qAction3.triggered.connect(self.mqAction3)
         self.menuBar().addAction(self.qAction3)
         self.qAction3.setDisabled(True)
     def mqAction1(self):
